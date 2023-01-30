@@ -1,5 +1,6 @@
 package Practica_1;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Practica_1 {
@@ -8,6 +9,7 @@ public class Practica_1 {
 		// TODO Auto-generated method stub
 
 		Scanner input = new Scanner(System.in);
+		Scanner input_space = new Scanner(System.in).useDelimiter("\n");
 		String nombre = "";
 		String contraseña = "";
 		int opcion = 0;
@@ -23,8 +25,6 @@ public class Practica_1 {
 		int contadorP = 0;
 		int contadorD = 0;
 
-		int[] noProducto = new int[tamaño + 10];
-		int[] cantidadRVentas = new int[tamaño + 10];
 		int contadorVentas = 0;
 
 		while (!acceso) {
@@ -53,8 +53,8 @@ public class Practica_1 {
 						while (op1) {
 							String nombreProducto = "";
 							double precioProducto = 0;
-							System.out.print("Ingrese el Nombre del producto: ");
-							nombreProducto = input.next();
+							System.out.print("Ingrese el Nombre del producto: \n");
+							nombreProducto = input_space.nextLine();
 							System.out.print("Ingrese el Precio del producto: ");
 							precioProducto = input.nextDouble();
 							boolean existencia = verificarExistencia(nombreProducto, nombreProductos);
@@ -105,12 +105,14 @@ public class Practica_1 {
 						break;
 					case 3:
 						String nombreCliente = "";
-						int Nit = 0;
+						long Nit = 0;
 
 						System.out.print("Ingrese el nombre del Cliente");
-						nombreCliente = input.next();
-						System.out.println("Ingrese el Nit del usuario");
-						Nit = input.nextInt();
+						nombreCliente = input_space.nextLine();
+						System.out.println("Ingrese el Nit del usuario (Si no posee ingrese 0)");
+						Nit = input.nextLong();
+						int[] noProducto = new int[tamaño];
+						int[] cantidadRVentas = new int[tamaño];
 
 						if (!nombreCliente.equals("")) {
 							imprimirProductos(nombreProductos, precioProductos);
@@ -128,10 +130,10 @@ public class Practica_1 {
 								} else {
 									System.out.print("Ingrese la cantidad de" + nombreProductos[auxiliar - 1] + ": ");
 									int cant = input.nextInt();
-									cantidadRVentas[contadorVentas] = cant;
-									vTotales[auxiliar - 1] += cant;
+									cantidadRVentas[auxiliar - 1] += cant;
+									vTotales[auxiliar - 1] = vTotales[auxiliar - 1] + cant;
 									noProducto[contadorVentas] = auxiliar;
-									total += precioProductos[auxiliar - 1] * cant;
+									// total += precioProductos[auxiliar - 1] * cant;
 									contadorVentas++;
 								}
 
@@ -139,7 +141,8 @@ public class Practica_1 {
 							System.out.print("Tiene algun codigo de descuento: ");
 							String codigoIngresado = input.next();
 							boolean existenciaDIngresado = verificarExistencia(codigoIngresado, codigoDescuentos);
-							if (existenciaDIngresado == true) {
+							double porcentaje = 0;
+							if (existenciaDIngresado) {
 								int posicion = 0;
 								for (int i = 0; i < codigoDescuentos.length; i++) {
 									if (codigoDescuentos[i] == codigoIngresado) {
@@ -147,15 +150,32 @@ public class Practica_1 {
 										break;
 									}
 								}
-								total = total - total * (porcentajesD[posicion] / 100);
+								// total = total - total * (porcentajesD[posicion] / 100);
+								porcentaje = porcentajesD[posicion];
+							} else {
+								codigoIngresado = "";
 							}
-							System.out.println(total);
-							for (int cant1 : vTotales) {
-								System.out.println(cant1);
-							}
+							imprimirFactura(nombreCliente, Nit, nombreProductos, precioProductos, cantidadRVentas,
+									codigoIngresado, porcentaje);
+							// imprimirFactura(nombreCliente, Nit, nombreProductos, noProducto,
+							// precioProductos, total);
+
 						}
 						break;
 					case 4:
+						System.out.println(Arrays.toString(vTotales));
+						int[] pos = burbuja(vTotales);
+						//System.out.println(vTotales[pos.length-1]);
+						for (int i = 0; i < pos.length; i++) {
+							if (nombreProductos[i] != null ) {
+								// System.out.println(ventas[posiciones1[1]]);
+								//System.out.println(i+"fjlkdasj");
+								System.out.println(nombreProductos[pos[i]]);
+								System.out.println(precioProductos[pos[i]]);
+								System.out.println(vTotales[pos[i]]);
+								System.out.println("---");
+							}
+						}
 
 						break;
 					case 5:
@@ -216,4 +236,71 @@ public class Practica_1 {
 			}
 		}
 	}
+
+	static void imprimirFactura(String nCliente, long nitCliente, String[] nProductos, double[] pProdcutos,
+			int[] unidades, String codigo, double porce) {
+		double total = 0;
+
+		System.out.println("Nombre del cliente: " + nCliente);
+		if (nitCliente != 0) {
+			System.out.println("Nit del Cliente: " + nitCliente);
+		} else {
+			System.out.println("Nit del Cliente: C/F");
+		}
+		System.out.println("Fecha: ");
+
+		for (int i = 0; i < nProductos.length; i++) {
+			if (nProductos[i] != null) {
+				System.out.print("\n Nombre del Producto" + nProductos[i] + " ");
+				System.out.print("Precio del Producto" + pProdcutos[i] + " ");
+				System.out.print("Unidades" + unidades[i] + " ");
+				System.out.printf("Total/productos: %.2f", pProdcutos[i] * unidades[i]);
+				total += pProdcutos[i] * unidades[i];
+			}
+		}
+		System.out.println(" ");
+		System.out.printf(" Subtotal: %.2f", total);
+		// System.out.println("lo que envia el descuento " + codigo + "-------");
+		if (codigo.equals("")) {
+			System.out.printf("No ingreso ningun cupón su total es de: %.2f", total);
+		} else {
+			System.out.println("El descuento es del " + porce);
+			total = total - total * (porce / 100);
+			System.out.printf("Total: %.2f", total);
+		}
+
+	}
+
+	private static int[] burbuja(int[] ventasTotales) {
+		int[] posiciones=new int[ventasTotales.length];
+		int[] ordenado = ventasTotales.clone();
+		
+		
+		for (int i = 0; i < ordenado.length; i++) {
+			for (int j = 0; j < ordenado.length-i-1; j++) {
+				if(ordenado[j] < ordenado[j+1]) {
+					int temp = ordenado[j];
+					ordenado[j] = ordenado[j+1];
+					ordenado[j+1]=temp;
+					
+				}
+				
+			}
+		}
+		
+		int contador1=0;
+		for (int i = 0; i < ordenado.length; i++) {
+			for (int j = 0; j < ordenado.length; j++) {
+				if(ordenado[i]==ventasTotales[j] && contador1 <= (ordenado.length-1)) {
+					System.out.println(ventasTotales[i]+" i: "+i+" j: "+j+ "|"+ordenado[j]);
+					posiciones[contador1]=j;
+					contador1++;
+				}
+			}
+		}
+
+		return posiciones;
+
+	}
+
 }
