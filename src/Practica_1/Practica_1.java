@@ -16,7 +16,8 @@ public class Practica_1 {
 		boolean acceso = false;
 
 		int tamaño = 10;
-
+		// ×
+		//alertas("» Error 2 ", "Error de Ejemplo 22");
 		String[] nombreProductos = new String[tamaño];
 		String[] codigoDescuentos = new String[tamaño];
 		double[] precioProductos = new double[tamaño];
@@ -53,7 +54,7 @@ public class Practica_1 {
 						while (op1) {
 							String nombreProducto = "";
 							double precioProducto = 0;
-							System.out.print("Ingrese el Nombre del producto: \n");
+							System.out.print("Ingrese el Nombre del producto: ");
 							nombreProducto = input_space.nextLine();
 							System.out.print("Ingrese el Precio del producto: ");
 							precioProducto = input.nextDouble();
@@ -165,11 +166,11 @@ public class Practica_1 {
 					case 4:
 						System.out.println(Arrays.toString(vTotales));
 						int[] pos = burbuja(vTotales);
-						//System.out.println(vTotales[pos.length-1]);
+						// System.out.println(vTotales[pos.length-1]);
 						for (int i = 0; i < pos.length; i++) {
-							if (nombreProductos[i] != null ) {
+							if (nombreProductos[i] != null) {
 								// System.out.println(ventas[posiciones1[1]]);
-								//System.out.println(i+"fjlkdasj");
+								// System.out.println(i+"fjlkdasj");
 								System.out.println(nombreProductos[pos[i]]);
 								System.out.println(precioProductos[pos[i]]);
 								System.out.println(vTotales[pos[i]]);
@@ -211,6 +212,21 @@ public class Practica_1 {
 		System.out.println(" ╚══════════════════════════════════════════════════════════════════════════════╝");
 		System.out.print("Opcion: ");
 	}
+	
+	public static void alertas(String tipo, String mensaje) {
+		System.out.println();
+		System.out.println(" ╔═════════════════════════════════════════╗");
+		System.out.print(" ║");
+		System.out.printf(" %-40s",tipo);
+		System.out.print("║");
+		System.out.println("");
+		System.out.println(" ╠═════════════════════════════════════════╣");
+		System.out.print(" ║");
+		System.out.printf(" %-40s",mensaje);
+		System.out.print("║");
+		System.out.println("");
+		System.out.println(" ╚═════════════════════════════════════════╝");
+	}
 
 	static boolean verificarExistencia(String nPr, String[] nPrs) {
 		for (int i = 0; i < nPrs.length; i++) {
@@ -240,27 +256,35 @@ public class Practica_1 {
 	static void imprimirFactura(String nCliente, long nitCliente, String[] nProductos, double[] pProdcutos,
 			int[] unidades, String codigo, double porce) {
 		double total = 0;
-
-		System.out.println("Nombre del cliente: " + nCliente);
+		System.out.println("");
+		System.out.println("SUPER-25");
+		System.out.println("");
+		System.out.println("Nombre del Cliente: "+nCliente);
 		if (nitCliente != 0) {
 			System.out.println("Nit del Cliente: " + nitCliente);
 		} else {
 			System.out.println("Nit del Cliente: C/F");
 		}
-		System.out.println("Fecha: ");
-
+		System.out.println("Fecha: 29/01/2023");
+		
+		System.out.printf("|    NOMBRE DEL PRODUCTO    |  PRECIO UNITARIO  | CANTIDAD |   TOTAL   |\n");
+		String espacio="";
 		for (int i = 0; i < nProductos.length; i++) {
 			if (nProductos[i] != null) {
-				System.out.print("\n Nombre del Producto" + nProductos[i] + " ");
-				System.out.print("Precio del Producto" + pProdcutos[i] + " ");
-				System.out.print("Unidades" + unidades[i] + " ");
-				System.out.printf("Total/productos: %.2f", pProdcutos[i] * unidades[i]);
+				System.out.print("| ");
+				System.out.printf("%-26s", nProductos[i]);
+				System.out.print("| ");
+				System.out.printf("%.2f %-13s",pProdcutos[i], espacio);
+				System.out.print("|");
+				System.out.printf("%-9s",unidades[i]);
+				System.out.print("| ");
+				System.out.printf("%10.2f",pProdcutos[i] * unidades[i]);
+				System.out.println("");
 				total += pProdcutos[i] * unidades[i];
 			}
 		}
 		System.out.println(" ");
 		System.out.printf(" Subtotal: %.2f", total);
-		// System.out.println("lo que envia el descuento " + codigo + "-------");
 		if (codigo.equals("")) {
 			System.out.printf("No ingreso ningun cupón su total es de: %.2f", total);
 		} else {
@@ -272,35 +296,29 @@ public class Practica_1 {
 	}
 
 	private static int[] burbuja(int[] ventasTotales) {
-		int[] posiciones=new int[ventasTotales.length];
+		int[] posiciones = new int[ventasTotales.length];
 		int[] ordenado = ventasTotales.clone();
-		
-		
+
 		for (int i = 0; i < ordenado.length; i++) {
-			for (int j = 0; j < ordenado.length-i-1; j++) {
-				if(ordenado[j] < ordenado[j+1]) {
+			for (int j = 0; j < ordenado.length - i - 1; j++) {
+				if (ordenado[j] < ordenado[j + 1]) {
 					int temp = ordenado[j];
-					ordenado[j] = ordenado[j+1];
-					ordenado[j+1]=temp;
-					
+					ordenado[j] = ordenado[j + 1];
+					ordenado[j + 1] = temp;
 				}
-				
 			}
 		}
-		
-		int contador1=0;
+
+		int contador1 = 0;
 		for (int i = 0; i < ordenado.length; i++) {
 			for (int j = 0; j < ordenado.length; j++) {
-				if(ordenado[i]==ventasTotales[j] && contador1 <= (ordenado.length-1)) {
-					System.out.println(ventasTotales[i]+" i: "+i+" j: "+j+ "|"+ordenado[j]);
-					posiciones[contador1]=j;
+				if (ordenado[i] == ventasTotales[j] && contador1 <= (ordenado.length - 1)) {
+					posiciones[contador1] = j;
 					contador1++;
 				}
 			}
 		}
-
 		return posiciones;
-
 	}
 
 }
