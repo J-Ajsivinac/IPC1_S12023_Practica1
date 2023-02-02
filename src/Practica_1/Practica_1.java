@@ -1,6 +1,5 @@
 package Practica_1;
 
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -28,15 +27,16 @@ public class Practica_1 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println(Math.round((2.35433*100.0))/100.0);
+		
+		
 		int opcion = 0;
 		inicarSesion();
 		if (acceso) {
-			System.out.println("Bienvenido");
 			while (opcion != 5) {
 				try {
 					opciones();
 					opcion = input.nextInt();
+					System.out.print("\n");
 					switch (opcion) {
 					case 1:
 						agregarProductos();
@@ -68,10 +68,10 @@ public class Practica_1 {
 
 	public static void inicarSesion() {
 		while (!acceso) {
-			System.out.println("INICIAR SESIÓN");
-			System.out.print("🙍‍♂️ Ingrese su Usuario: ");
+			titulos("INICIAR SESIÓN");
+			System.out.print(" 🙍‍♂️ Ingrese su Usuario: ");
 			nombre = input.nextLine();
-			System.out.print("\n🔒 Ingrese su Contraseña: ");
+			System.out.print("\n 🔒 Ingrese su Contraseña: ");
 			contraseña = input.nextLine();
 			if (nombre.equals("c") && contraseña.equals("i")) {
 				acceso = true;
@@ -98,8 +98,15 @@ public class Practica_1 {
 		System.out.println(" ╚══════════════════════════════════════════════════════════════════════════════╝");
 		System.out.print("Opcion: ");
 	}
+	public static void titulos(String titulo) {
+		String tImprimir=" ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n"
+				   + "  🔸 "+titulo+"\n"
+				+ " ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n";
+		System.out.println(tImprimir);
+	}
 
 	public static void agregarProductos() {
+		titulos("AGREGAR PRODUCTOS");
 		boolean op1 = true;
 		while (op1) {
 			String nombreProducto = "";
@@ -117,7 +124,7 @@ public class Practica_1 {
 				alertas("× ERROR", "La capacidad máxima de productos ha sido alcanzada");
 			} else {
 				nombreProductos[contadorP] = nombreProducto;
-				precioProductos[contadorP] = precioProducto;
+				precioProductos[contadorP] = Math.round((precioProducto*100.0))/100.0;
 				vTotales[contadorP] = 0;
 				contadorP++;
 				op1 = false;
@@ -127,6 +134,7 @@ public class Practica_1 {
 	}
 
 	public static void agregarCupones() {
+		titulos("AGREGAR CUPONES");
 		boolean op2 = true;
 		while (op2) {
 			String codigoD = "";
@@ -147,7 +155,7 @@ public class Practica_1 {
 				alertas("× ERROR", "La capacidad máxima de cupones ha sido alcanzada");
 			} else {
 				codigoDescuentos[contadorD] = codigoD;
-				porcentajesD[contadorD] = porcentaje;
+				porcentajesD[contadorD] = Math.round((porcentaje*100.0))/100.0;
 				contadorD++;
 				alertas("» Operación Existosa", "Cupones registrados Exitosamente");
 				op2 = false;
@@ -160,6 +168,7 @@ public class Practica_1 {
 			alertas("■ ADVERTENCIA", "No hay productos ingresados");
 			return;
 		}
+		titulos("REALIZAR VENTAS");
 		String nombreCliente = "";
 		long Nit = 0;
 
@@ -176,8 +185,6 @@ public class Practica_1 {
 			while (pVentas) {
 				System.out.print("Ingrese el No del Producto (Ingrese 0 para culminar la compra): ");
 				int auxiliar = input.nextInt();
-				// auxiliar = ;
-
 				if (auxiliar == 0) {
 					if (contadorVentas == 0) {
 						alertas("■ ADVERTENCIA", "No se agrego ningun producto");
@@ -189,11 +196,16 @@ public class Practica_1 {
 				} else {
 					System.out.print("Ingrese la cantidad del producto (" + nombreProductos[auxiliar - 1] + "): ");
 					int cant = input.nextInt();
-					cantidadRVentas[auxiliar - 1] += cant;
-					vTotales[auxiliar - 1] = vTotales[auxiliar - 1] + cant;
-					noProducto[contadorVentas] = auxiliar;
-					contadorVentas++;
-					System.out.println("");
+					if(cant > 0) {
+						cantidadRVentas[auxiliar - 1] += cant;
+						vTotales[auxiliar - 1] = vTotales[auxiliar - 1] + cant;
+						noProducto[contadorVentas] = auxiliar;
+						contadorVentas++;
+						System.out.println("");
+					}else {
+						alertas("× ERROR", "No se puede comprar 0 unidades");
+					}
+					
 				}
 
 			}
@@ -202,7 +214,7 @@ public class Practica_1 {
 			double porcentaje=0;
 			
 			while (descuentoA) {
-				System.out.print("Tiene algun codigo de descuento (Si no lo tiene escriba n): ");
+				System.out.print("\nTiene algun codigo de descuento (Si no lo tiene escriba n): ");
 				codigoIngresado="";
 				porcentaje=0;
 				codigoIngresado = input.next();
@@ -224,10 +236,7 @@ public class Practica_1 {
 					alertas("■ ADVERTENCIA", "El codigo no existe, reviselo por favor");
 				}
 			}
-
-			// System.out.println(Arrays.toString(porcentajesD)+" "+porcentaje);
 			imprimirFactura(nombreCliente, Nit, cantidadRVentas, codigoIngresado, porcentaje);
-
 		}
 	}
 
@@ -258,19 +267,23 @@ public class Practica_1 {
 
 	static void imprimirProductos() {
 		System.out.println("");
-		System.out.printf("|  No.  |      NOMBRE DEL PRODUCTO      |    PRECIO    |\n");
+		System.out.println("╔═══════╦═══════════════════════════════╦══════════════╗");
+		System.out.printf("║  No.  ║      NOMBRE DEL PRODUCTO      ║    PRECIO    ║\n");
+		System.out.println("╠═══════╬═══════════════════════════════╬══════════════╣");
 		for (int i = 0; i < nombreProductos.length; i++) {
 			if (nombreProductos[i] != null) {
-				System.out.print("| ");
+				System.out.print("║ ");
 				System.out.printf("%-6s", (i + 1));
-				System.out.print("| ");
+				System.out.print("║ ");
 				System.out.printf("%-30s", nombreProductos[i]);
-				System.out.print("| ");
+				System.out.print("║ ");
 				System.out.printf("%12.2f", precioProductos[i]);
-				System.out.print(" |");
-				System.out.println();
+				System.out.print(" ║");
+				System.out.println("");
+				
 			}
 		}
+		System.out.println("╚═══════╩═══════════════════════════════╩══════════════╝");
 	}
 
 	static void imprimirFactura(String nCliente, long nitCliente, int[] unidades, String codigo, double porce) {
@@ -298,7 +311,9 @@ public class Practica_1 {
 		System.out.printf("%-81s", "║ Fecha: 31/01/2023");
 		System.out.println("║");
 		System.out.println("║                                                                                ║");
+		System.out.println("║ +---------------------------------+-----------------+----------+-------------+ ║");
 		System.out.printf("║ |       NOMBRE DEL PRODUCTO       | PRECIO UNITARIO | CANTIDAD |    TOTAL    | ║\n");
+		System.out.println("║ +---------------------------------+-----------------+----------+-------------+ ║");
 		for (int i = 0; i < nombreProductos.length; i++) {
 			if (nombreProductos[i] != null && unidades[i] != 0) {
 				System.out.print("║ ");
@@ -317,6 +332,7 @@ public class Practica_1 {
 
 			}
 		}
+		System.out.println("║ +---------------------------------+-----------------+----------+-------------+ ║");
 		System.out.println("║                                                                                ║");
 		System.out.print("║");
 		System.out.printf("%66s", "SUBTOTAL: ");
@@ -324,7 +340,7 @@ public class Practica_1 {
 		System.out.println("  ║");
 		System.out.print("║");
 		if (codigo.equals("")) {
-			System.out.printf("%78s", "No se ingreso ningún cupón de descuento");
+			System.out.printf("%79s", "No se ingreso ningún cupón de descuento");
 		} else {
 			String tPorcentaje = String.format("%.2f", porce);
 			System.out.printf("%78s ", "El descuento es del " + tPorcentaje + "%");
@@ -332,6 +348,7 @@ public class Practica_1 {
 		}
 		System.out.print(" ║");
 		System.out.println();
+		System.out.println("║                                                                                ║");
 		System.out.print("║");
 		System.out.printf("%66s", "TOTAL: ");
 		System.out.printf("%12.2f", total);
@@ -344,6 +361,7 @@ public class Practica_1 {
 			alertas("■ ADVERTENCIA", "No hay productos ingresados");
 			return;
 		}
+		titulos("REALIZAR REPORTE");
 		int[] ventasOrdenadas = new int[vTotales.length];
 		ventasOrdenadas = vTotales.clone();
 
@@ -364,7 +382,6 @@ public class Practica_1 {
 			}
 		}
 
-		System.out.println(Arrays.toString(nombresOrdenados));
 		System.out.println("╔═══════╦════════════════════════════════════╦═════════════════════════════╗");
 		System.out.printf("║  No.  ║        NOMBRE DEL PRODUCTO         ║ CANTIDAD DE VECES COMPRADAS ║\n");
 		System.out.println("╠═══════╬════════════════════════════════════╬═════════════════════════════╣");
