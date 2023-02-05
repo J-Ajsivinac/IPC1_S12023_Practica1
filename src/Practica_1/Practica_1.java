@@ -1,69 +1,78 @@
 package Practica_1;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Practica_1 {
 	// variables para interactuar con el sistema
 	static Scanner input = new Scanner(System.in);
+	static Scanner inputMenu = new Scanner(System.in);
 	static Scanner input_space = new Scanner(System.in).useDelimiter("\n");
 	static boolean acceso = false;
 	// variables para iniciar sesión
 	static String nombre = "";
 	static String contraseña = "";
-	// variables para agregar producros
+	// tamaño de los arreglos
 	static int tamaño = 10;
+	// variables para agregar producros
 	static int contadorP = 0;
 	static String[] nombreProductos = new String[tamaño];
 	static double[] precioProductos = new double[tamaño];
 	static int[] vTotales = new int[tamaño];
-
 	// variables para agregar descuentos
 	static String[] codigoDescuentos = new String[tamaño];
 	static double[] porcentajesD = new double[tamaño];
+	// contadores
 	static int contadorD = 0;
-
-	static int contadorVentas = 0;
+	static int opcion = 0;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
-		
-		int opcion = 0;
 		inicarSesion();
 		if (acceso) {
 			while (opcion != 5) {
-				try {
-					opciones();
-					opcion = input.nextInt();
-					System.out.print("\n");
-					switch (opcion) {
-					case 1:
-						agregarProductos();
-						break;
-					case 2:
-						agregarCupones();
-						break;
-					case 3:
-						realizarVentas();
-						break;
-					case 4:
-						reporte();
-						break;
-					case 5:
-						break;
-					default:
-						alertas("× ERROR", "Ingresar numeros entre 1 y 5");
-						break;
-					}
-
-				} catch (InputMismatchException e) {
-					System.out.println("\n  Opcion invalida" + e);
-					break;
-				}
+				menuOpciones();
 			}
 		}
+	}
 
+	public static void menuOpciones() {
+		opciones();
+		try {
+			opcion = inputMenu.nextInt();
+
+		} catch (Exception e) {
+			alertas("× ERROR", "Tipo de dato erroneo");
+			opcion = 0;
+			inputMenu.next();
+			return;
+		}
+		System.out.print("\n");
+		switch (opcion) {
+		case 1:
+			titulos("AGREGAR PRODUCTOS");
+			agregarProductos();
+			break;
+		case 2:
+			titulos("AGREGAR CUPONES");
+			agregarCupones();
+			break;
+		case 3:
+			titulos("REALIZAR VENTAS");
+			realizarVentas();
+			break;
+		case 4:
+			titulos("REALIZAR REPORTE");
+			reporte();
+			break;
+		case 5:
+			alertas("» Operación Existosa", "Cierre de Sesión");
+			break;
+		default:
+			alertas("× ERROR", "Ingresar numeros entre 1 y 5");
+			break;
+		}
 	}
 
 	public static void inicarSesion() {
@@ -78,7 +87,6 @@ public class Practica_1 {
 			} else {
 				alertas("× ERROR", "Datos incorrectos");
 			}
-
 		}
 	}
 
@@ -98,23 +106,22 @@ public class Practica_1 {
 		System.out.println(" ╚══════════════════════════════════════════════════════════════════════════════╝");
 		System.out.print("Opcion: ");
 	}
+
 	public static void titulos(String titulo) {
-		String tImprimir=" ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n"
-				   + "  🔸 "+titulo+"\n"
-				+ " ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n";
+		String tImprimir = " ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n" + "  🔸 " + titulo + "\n" + " ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n";
 		System.out.println(tImprimir);
 	}
 
 	public static void agregarProductos() {
-		titulos("AGREGAR PRODUCTOS");
+
 		boolean op1 = true;
 		while (op1) {
 			String nombreProducto = "";
 			double precioProducto = 0;
 			System.out.print("Ingrese el Nombre del producto: ");
 			nombreProducto = input_space.nextLine();
-			System.out.print("Ingrese el Precio del producto: ");
-			precioProducto = input.nextDouble();
+			precioProducto = ingresarDecimales("Ingrese el Precio del producto: ");
+
 			boolean existencia = verificarExistencia(nombreProducto, nombreProductos);
 			if (existencia == true) {
 				alertas("× ERROR", "Este producto ya ha sido ingresado anteriormente");
@@ -124,42 +131,42 @@ public class Practica_1 {
 				alertas("× ERROR", "La capacidad máxima de productos ha sido alcanzada");
 			} else {
 				nombreProductos[contadorP] = nombreProducto;
-				precioProductos[contadorP] = Math.round((precioProducto*100.0))/100.0;
+				precioProductos[contadorP] = Math.round((precioProducto * 100.0)) / 100.0;
 				vTotales[contadorP] = 0;
 				contadorP++;
-				op1 = false;
-				alertas("» Operación Existosa", "Producto Registrado Exitosamente");
+				alertas("» Operación Existosa", "Producto Registrado");
 			}
+			op1 = seguirCiclo("¿Seguir ingresando Productos [si/no]?: ");
+			System.out.println();
 		}
 	}
 
 	public static void agregarCupones() {
-		titulos("AGREGAR CUPONES");
 		boolean op2 = true;
 		while (op2) {
 			String codigoD = "";
 			double porcentaje = 0.0;
 			System.out.print("Ingrese el codigo del descuento: ");
 			codigoD = input.next();
-			System.out.print("Ingrese el porcentaje del descuento: ");
-			porcentaje = input.nextDouble();
-
+			porcentaje = ingresarDecimales("Ingrese el porcentaje del descuento: ");
 			boolean existenciaD = verificarExistencia(codigoD, codigoDescuentos);
+
 			if (existenciaD == true) {
 				alertas("× ERROR", "Este Cupon ya ha sido ingresado anteriormentea");
 			} else if (!(codigoD.length() == 4)) {
 				alertas("× ERROR", "Debe ingresar un codigo de 4 caracteres");
 			} else if (!(porcentaje > 0 && porcentaje < 100)) {
-				alertas("× ERROR", "Debe ingresar un descuento entre 0 y 100");
+				alertas("× ERROR", "Solo descuentos mayores a 0 o menores a 100");
 			} else if (contadorP > (tamaño - 1)) {
 				alertas("× ERROR", "La capacidad máxima de cupones ha sido alcanzada");
 			} else {
 				codigoDescuentos[contadorD] = codigoD;
-				porcentajesD[contadorD] = Math.round((porcentaje*100.0))/100.0;
+				porcentajesD[contadorD] = Math.round((porcentaje * 100.0)) / 100.0;
 				contadorD++;
-				alertas("» Operación Existosa", "Cupones registrados Exitosamente");
-				op2 = false;
+				alertas("» Operación Existosa", "Cupones Registrados");
 			}
+			op2 = seguirCiclo("¿Seguir ingresando Cupones [si/no]?: ");
+			System.out.println();
 		}
 	}
 
@@ -168,76 +175,83 @@ public class Practica_1 {
 			alertas("■ ADVERTENCIA", "No hay productos ingresados");
 			return;
 		}
-		titulos("REALIZAR VENTAS");
-		String nombreCliente = "";
-		long Nit = 0;
+		boolean op3 = true;
+		while (op3) {
+			String nombreCliente = "";
+			long Nit = 0;
+			int contadorVentas = 0;
+			System.out.print("Ingrese el nombre del Cliente: ");
+			nombreCliente = input_space.nextLine();
+			System.out.print("");
+			Nit = ingresarEnteros("Ingrese el Nit del usuario (Si no posee ingrese 0 ): ");
+			int[] cantidadRVentas = new int[tamaño];
+			double totalPreliminar = 0;
 
-		System.out.print("Ingrese el nombre del Cliente: ");
-		nombreCliente = input_space.nextLine();
-		System.out.print("Ingrese el Nit del usuario (Si no posee ingrese 0 ): ");
-		Nit = input.nextLong();
-		int[] noProducto = new int[tamaño];
-		int[] cantidadRVentas = new int[tamaño];
-
-		if (!nombreCliente.equals("")) {
-			imprimirProductos();
-			boolean pVentas = true;
-			while (pVentas) {
-				System.out.print("Ingrese el No del Producto (Ingrese 0 para culminar la compra): ");
-				int auxiliar = input.nextInt();
-				if (auxiliar == 0) {
-					if (contadorVentas == 0) {
-						alertas("■ ADVERTENCIA", "No se agrego ningun producto");
-					} else {
-						break;
-					}
-				} else if (auxiliar < 0 || auxiliar > contadorP) {
-					alertas("■ ADVERTENCIA", "Ingrese un No. correcto");
-				} else {
-					System.out.print("Ingrese la cantidad del producto (" + nombreProductos[auxiliar - 1] + "): ");
-					int cant = input.nextInt();
-					if(cant > 0) {
-						cantidadRVentas[auxiliar - 1] += cant;
-						vTotales[auxiliar - 1] = vTotales[auxiliar - 1] + cant;
-						noProducto[contadorVentas] = auxiliar;
-						contadorVentas++;
-						System.out.println("");
-					}else {
-						alertas("× ERROR", "No se puede comprar 0 unidades");
-					}
-					
-				}
-
-			}
-			boolean descuentoA = true;
-			String codigoIngresado="";
-			double porcentaje=0;
-			
-			while (descuentoA) {
-				System.out.print("\nTiene algun codigo de descuento (Si no lo tiene escriba n): ");
-				codigoIngresado="";
-				porcentaje=0;
-				codigoIngresado = input.next();
-				boolean existenciaDIngresado = verificarExistencia(codigoIngresado, codigoDescuentos);
-				if (existenciaDIngresado) {
-					int posicion = 0;
-					for (int i = 0; i < codigoDescuentos.length; i++) {
-						if (codigoDescuentos[i].equals(codigoIngresado)) {
-							posicion = i;
-							descuentoA=false;
+			if (!nombreCliente.equals("")) {
+				imprimirProductos();
+				boolean pVentas = true;
+				while (pVentas) {
+					int auxiliar = ingresarEnteros("Ingrese el No del Producto (Ingrese 0 para culminar la compra): ");
+					if (auxiliar == 0) {
+						if (contadorVentas == 0) {
+							alertas("■ ADVERTENCIA", "No se agrego ningún producto");
+						} else {
 							break;
 						}
+					} else if (auxiliar < 0 || auxiliar > contadorP) {
+						alertas("■ ADVERTENCIA", "Ingrese un No. Correcto");
+					} else {
+						int cant = 0;
+						cant = ingresarEnteros(
+								"Ingrese la cantidad del producto (" + nombreProductos[auxiliar - 1] + "): ");
+
+						if (cant > 0) {
+							cantidadRVentas[auxiliar - 1] += cant;
+							vTotales[auxiliar - 1] = vTotales[auxiliar - 1] + cant;
+							contadorVentas++;
+							totalPreliminar += precioProductos[auxiliar - 1] * cant;
+							System.out.println("");
+						} else {
+							alertas("× ERROR", "Solo cantidades mayores a 0");
+						}
 					}
-					porcentaje = porcentajesD[posicion];
-				} else if (codigoIngresado.equals("n")) {
-					codigoIngresado = "";
-					descuentoA=false;
-				} else {
-					alertas("■ ADVERTENCIA", "El codigo no existe, reviselo por favor");
 				}
+				System.out.print("\n EL TOTAL PRELIMINAR ES DE: ");
+				System.out.printf("%.2f", totalPreliminar);
+				System.out.println("");
+				boolean descuentoA = true;
+				String codigoIngresado = "";
+				double porcentaje = 0;
+
+				while (descuentoA) {
+					System.out.print("\nTiene algun codigo de descuento (Si no lo tiene escriba no): ");
+					codigoIngresado = "";
+					porcentaje = 0;
+					codigoIngresado = input.next();
+					boolean existenciaDIngresado = verificarExistencia(codigoIngresado, codigoDescuentos);
+					if (existenciaDIngresado) {
+						int posicion = 0;
+						for (int i = 0; i < codigoDescuentos.length; i++) {
+							if (codigoDescuentos[i].equals(codigoIngresado)) {
+								posicion = i;
+								descuentoA = false;
+								break;
+							}
+						}
+						porcentaje = porcentajesD[posicion];
+					} else if (codigoIngresado.equals("no")) {
+						codigoIngresado = "";
+						descuentoA = false;
+					} else {
+						alertas("■ ADVERTENCIA", "El codigo no existe, reviselo por favor");
+					}
+				}
+				imprimirFactura(nombreCliente, Nit, cantidadRVentas, codigoIngresado, porcentaje);
+				op3 = seguirCiclo("Seguir Realizando Ventas [si/no]: ");
+				System.out.println();
 			}
-			imprimirFactura(nombreCliente, Nit, cantidadRVentas, codigoIngresado, porcentaje);
 		}
+
 	}
 
 	public static void alertas(String tipo, String mensaje) {
@@ -256,16 +270,16 @@ public class Practica_1 {
 		System.out.println();
 	}
 
-	static boolean verificarExistencia(String vVerficar, String[] vGuardados) {
+	public static boolean verificarExistencia(String vVerficar, String[] vGuardados) {
 		for (int i = 0; i < vGuardados.length; i++) {
-			if (vVerficar.equals(vGuardados[i])) {
+			if (vGuardados[i] != null && vVerficar.equals(vGuardados[i])) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static void imprimirProductos() {
+	public static void imprimirProductos() {
 		System.out.println("");
 		System.out.println("╔═══════╦═══════════════════════════════╦══════════════╗");
 		System.out.printf("║  No.  ║      NOMBRE DEL PRODUCTO      ║    PRECIO    ║\n");
@@ -280,22 +294,24 @@ public class Practica_1 {
 				System.out.printf("%12.2f", precioProductos[i]);
 				System.out.print(" ║");
 				System.out.println("");
-				
 			}
 		}
 		System.out.println("╚═══════╩═══════════════════════════════╩══════════════╝");
 	}
 
-	static void imprimirFactura(String nCliente, long nitCliente, int[] unidades, String codigo, double porce) {
+	public static void imprimirFactura(String nCliente, long nitCliente, int[] unidades, String codigo, double porce) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDateTime now = LocalDateTime.now();
 		double total = 0;
 		System.out.println("");
-
 		System.out.println("╔════════════════════════════════════════════════════════════════════════════════╗");
 		System.out.print("║");
 		System.out.printf("%80s", "FACTURA ");
 		System.out.println("║");
 		System.out.println("║                                                                                ║");
 		System.out.printf("%-81s", "║ SUPER-25 ");
+		System.out.println("║");
+		System.out.printf("%-81s", "║ CAJERO: Joab Israel Ajsivinac Ajsivinac ");
 		System.out.println("║");
 		System.out.println("║                                                                                ║");
 		System.out.printf("%-81s", "║ Nombre del Cliente: " + nCliente);
@@ -308,7 +324,7 @@ public class Practica_1 {
 			System.out.println("║");
 		}
 
-		System.out.printf("%-81s", "║ Fecha: 31/01/2023");
+		System.out.printf("%-81s", "║ Fecha: " + dtf.format(now));
 		System.out.println("║");
 		System.out.println("║                                                                                ║");
 		System.out.println("║ +---------------------------------+-----------------+----------+-------------+ ║");
@@ -329,7 +345,6 @@ public class Practica_1 {
 				System.out.print("║");
 				System.out.println("");
 				total += precioProductos[i] * unidades[i];
-
 			}
 		}
 		System.out.println("║ +---------------------------------+-----------------+----------+-------------+ ║");
@@ -356,15 +371,14 @@ public class Practica_1 {
 		System.out.println("╚════════════════════════════════════════════════════════════════════════════════╝");
 	}
 
-	static void reporte() {
+	public static void reporte() {
 		if (contadorP == 0) {
 			alertas("■ ADVERTENCIA", "No hay productos ingresados");
 			return;
 		}
-		titulos("REALIZAR REPORTE");
+
 		int[] ventasOrdenadas = new int[vTotales.length];
 		ventasOrdenadas = vTotales.clone();
-
 		String[] nombresOrdenados = new String[nombreProductos.length];
 		nombresOrdenados = nombreProductos.clone();
 
@@ -381,7 +395,6 @@ public class Practica_1 {
 				}
 			}
 		}
-
 		System.out.println("╔═══════╦════════════════════════════════════╦═════════════════════════════╗");
 		System.out.printf("║  No.  ║        NOMBRE DEL PRODUCTO         ║ CANTIDAD DE VECES COMPRADAS ║\n");
 		System.out.println("╠═══════╬════════════════════════════════════╬═════════════════════════════╣");
@@ -397,7 +410,53 @@ public class Practica_1 {
 			}
 		}
 		System.out.println("╚═══════╩════════════════════════════════════╩═════════════════════════════╝");
-
 	}
 
+	public static boolean seguirCiclo(String mensaje) {
+		String decision = "";
+		boolean activar = true;
+		while (activar) {
+			System.out.print(mensaje);
+			decision = input_space.nextLine();
+			if (decision.equals("no") || decision.equals("No")) {
+				activar = false;
+			} else if (decision.equals("si") || decision.equals("Si")) {
+				activar = true;
+				break;
+			} else {
+				System.out.println("Por favor ingresar si/no");
+			}
+		}
+		return activar;
+	}
+
+	public static int ingresarEnteros(String texto) {
+		int valor = 0;
+		do {
+			try {
+				System.out.print(texto);
+				valor = input.nextInt();
+				break;
+			} catch (Exception e) {
+				alertas("× ERROR", "Solo se admiten números Enteros");
+				input.next();
+			}
+		} while (true);
+		return valor;
+	}
+
+	public static double ingresarDecimales(String texto) {
+		double valor = 0;
+		do {
+			try {
+				System.out.print(texto);
+				valor = input.nextDouble();
+				break;
+			} catch (Exception e) {
+				alertas("× ERROR", "Solo se admiten números decimales/Enteros");
+				input.next();
+			}
+		} while (true);
+		return valor;
+	}
 }
