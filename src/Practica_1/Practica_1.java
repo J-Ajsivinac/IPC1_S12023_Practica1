@@ -415,7 +415,7 @@ public class Practica_1 {
 		ventasOrdenadas = vTotales.clone();
 		String[] nombresOrdenados = new String[nombreProductos.length];
 		nombresOrdenados = nombreProductos.clone();
-
+		//contar cuantos elementos diferentes de 0 tiene el arreglo ventasOrdenadas
 		for (int v : ventasOrdenadas) {
 			if (v != 0) {
 				contadorVentasR++;
@@ -426,7 +426,7 @@ public class Practica_1 {
 			return;
 		}
 
-		// Ordenando
+		// Ordenando el arreglo con el método burbuja
 		for (int i = 0; i < ventasOrdenadas.length - 1; i++) {
 			for (int j = 0; j < ventasOrdenadas.length - i - 1; j++) {
 				if (ventasOrdenadas[j] < ventasOrdenadas[j + 1]) {
@@ -472,7 +472,7 @@ public class Practica_1 {
 				activar = true;
 				break;
 			} else {
-				System.out.println("\nPor favor ingresar si/no \n");
+				alertas("!ADVERTENCIA", "Por favor ingresar si o no");
 			}
 		}
 		return activar;
@@ -486,7 +486,7 @@ public class Practica_1 {
 		}
 		return false;
 	}
-	
+	//Método para obtener entradas unicamente enteros
 	public static int ingresarEnteros(String texto) {
 		int valor = 0;
 		do {
@@ -501,7 +501,7 @@ public class Practica_1 {
 		} while (true);
 		return valor;
 	}
-
+	//Método para obtener entradas unicamente numeros Enteros/Flotantes
 	public static double ingresarDecimales(String texto) {
 		double valor = 0;
 		do {
